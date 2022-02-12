@@ -51,7 +51,7 @@ public class Bot {
         
         //Accelerate first if going to slow
         
-        if(myCar.speed <= 3) {
+        if (myCar.speed <= 3) {
             return ACCELERATE;
         }
         
@@ -69,10 +69,10 @@ public class Bot {
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
                 List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState);
-                List<Object> rightNextBlock = rightBlocks.subList(0, 4);
+                List<Object> rightNextBlock = rightBlocks.subList(0, 1);
 
                 List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState);
-                List<Object> leftNextBlock = leftBlocks.subList(0, 4);
+                List<Object> leftNextBlock = leftBlocks.subList(0, 1);
                 
                 if (rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL) && 
                     !(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL))) {
@@ -91,29 +91,16 @@ public class Bot {
                
                         return LIZARD;
                     
+                    } else {
+                        return ACCELERATE;
                     }
                 
                 } else if  (!(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL)) && 
                 !(rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))) {
 
-                    if (myCar.position.lane == 1) {
-
-                        return TURN_RIGHT;
-        
-                    } else if (myCar.position.lane == 4) {
-                        
-                        return TURN_LEFT;
-                    
-                    } else {
-
-                        // nanti ditambahin aja misal lane yang ada powerups nya
-
-                        return TURN_RIGHT;
-                    
-                    }
+                    return TURN_RIGHT;
 
                 }
-
 
             } else if (myCar.position.lane == 1) {
 
@@ -124,6 +111,10 @@ public class Bot {
                 return TURN_LEFT;
             
             }
+
+        } else {
+            
+            return ACCELERATE;
 
         }
 
@@ -143,7 +134,7 @@ public class Bot {
             }
         }
 
-        return NOTHING;
+        return ACCELERATE;
         
     }
 
