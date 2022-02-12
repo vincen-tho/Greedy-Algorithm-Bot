@@ -25,6 +25,7 @@ public class Bot {
     private final static Command BOOST = new BoostCommand();
     private final static Command EMP = new EmpCommand();
     private final static Command FIX = new FixCommand();
+    private final static Command NOTHING = new DoNothingCommand();
 
     private final static Command TURN_RIGHT = new ChangeLaneCommand(1);
     private final static Command TURN_LEFT = new ChangeLaneCommand(-1);
@@ -53,6 +54,7 @@ public class Bot {
         if(myCar.speed <= 3) {
             return ACCELERATE;
         }
+        
 
         //Basic fix logic
         
@@ -62,15 +64,15 @@ public class Bot {
 
         //Basic avoidance logic
         
-        if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.WALL)) {
+        if (blocks.contains(Terrain.MUD) || nextBlocks.contains(Terrain.MUD) || blocks.contains(Terrain.WALL) || nextBlocks.contains(Terrain.WALL) ) {
                 
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
                 List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState);
-                List<Object> rightNextBlock = rightBlocks.subList(0, 1);
+                List<Object> rightNextBlock = rightBlocks.subList(0, 4);
 
                 List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState);
-                List<Object> leftNextBlock = leftBlocks.subList(0, 1);
+                List<Object> leftNextBlock = leftBlocks.subList(0, 4);
                 
                 if (rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL) && 
                     !(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL))) {
@@ -82,7 +84,8 @@ public class Bot {
 
                     return TURN_RIGHT;
 
-                } else {
+                } else if (leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL) && 
+                (rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))){
                     
                     if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
                
@@ -90,7 +93,27 @@ public class Bot {
                     
                     }
                 
+                } else if  (!(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL)) && 
+                !(rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))) {
+
+                    if (myCar.position.lane == 1) {
+
+                        return TURN_RIGHT;
+        
+                    } else if (myCar.position.lane == 4) {
+                        
+                        return TURN_LEFT;
+                    
+                    } else {
+
+                        // nanti ditambahin aja misal lane yang ada powerups nya
+
+                        return TURN_RIGHT;
+                    
+                    }
+
                 }
+
 
             } else if (myCar.position.lane == 1) {
 
@@ -120,7 +143,8 @@ public class Bot {
             }
         }
 
-        return ACCELERATE;
+        return NOTHING;
+        
     }
 
     private Boolean hasPowerUp(PowerUps powerUpToCheck, PowerUps[] available) {
@@ -156,6 +180,14 @@ public class Bot {
         }
         return blocks;
     }
+
+    // Fungsi untuk memeriksa apakah sebuah block mengandung obstacle
+
+    private boolean isObstacle (List<Object> blocks) {
+
+        return blocks.contains(Terrain.WALL) || blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL);
+    
+    } 
 
 
 }
