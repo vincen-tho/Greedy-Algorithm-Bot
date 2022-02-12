@@ -1,0 +1,10 @@
+/.idea
+/.vscode
+/reference-bot
+/match-logs
+game-config.json
+game-engine.jar
+game-runner-config.json
+game-runner-jar-with-dependencies.jar
+makefile
+run.bat
