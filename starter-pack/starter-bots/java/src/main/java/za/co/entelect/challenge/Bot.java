@@ -103,11 +103,34 @@ public class Bot {
                 }
 
             } else if (myCar.position.lane == 1) {
+                List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState);
+                List<Object> rightNextBlock = rightBlocks.subList(0, 0);
+
+                if (isObstacle(rightBlocks) || isObstacle(rightNextBlock)) {
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+               
+                        return LIZARD;
+                    
+                    } else {
+                        return ACCELERATE;
+                    }
+                }
 
                 return TURN_RIGHT;
 
             } else if (myCar.position.lane == 4) {
-                
+                List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState);
+                List<Object> leftNextBlock = leftBlocks.subList(0, 0);
+
+                if (isObstacle(leftBlocks) || isObstacle(leftNextBlock)) {
+                    if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+               
+                        return LIZARD;
+                    
+                    } else {
+                        return ACCELERATE;
+                    }
+                }
                 return TURN_LEFT;
             
             }
@@ -154,20 +177,22 @@ public class Bot {
 
     
     private List<Object> getBlocksInFront(int lane, int block, GameState gameState) {
-        List<Lane[]> map = gameState.lanes;
         List<Object> blocks = new ArrayList<>();
-        int startBlock = map.get(0)[0].position.block;
+        if (lane != 4 || lane != 1){
+            List<Lane[]> map = gameState.lanes;
+            int startBlock = map.get(0)[0].position.block;
 
-        Lane[] laneList = map.get(lane - 1);
-        
-        
-        for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
-            if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
-                break;
+            Lane[] laneList = map.get(lane - 1);
+            
+            
+            for (int i = max(block - startBlock, 0); i <= block - startBlock + Bot.maxSpeed; i++) {
+                if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
+                    break;
+                }
+
+                blocks.add(laneList[i].terrain);
+
             }
-
-            blocks.add(laneList[i].terrain);
-
         }
         return blocks;
     }
