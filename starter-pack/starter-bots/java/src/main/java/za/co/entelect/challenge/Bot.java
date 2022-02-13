@@ -64,7 +64,7 @@ public class Bot {
 
         //Basic avoidance logic
         
-        if (blocks.contains(Terrain.MUD) || nextBlocks.contains(Terrain.MUD) || blocks.contains(Terrain.WALL) || nextBlocks.contains(Terrain.WALL) ) {
+        if (isObstacle(blocks) || isObstacle(nextBlocks)) {
                 
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
@@ -74,18 +74,18 @@ public class Bot {
                 List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState);
                 List<Object> leftNextBlock = leftBlocks.subList(0, 1);
                 
-                if (rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL) && 
-                    !(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL))) {
+                if ( (isObstacle(rightBlocks) || isObstacle(rightNextBlock)) && 
+                    !(isObstacle(leftBlocks) || isObstacle(leftNextBlock)) ) {
 
                     return TURN_LEFT;
                 
-                } else if (leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL) && 
-                !(rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))) {
+                } else if ( (isObstacle(leftBlocks) || isObstacle(leftNextBlock))&& 
+                !(isObstacle(rightBlocks) || isObstacle(rightNextBlock)) ) {
 
                     return TURN_RIGHT;
 
-                } else if (leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL) && 
-                (rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))){
+                } else if ( (isObstacle(rightBlocks) || isObstacle(rightNextBlock)) && 
+                (isObstacle(leftBlocks) || isObstacle(leftNextBlock)) ){
                     
                     if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
                
@@ -95,8 +95,8 @@ public class Bot {
                         return ACCELERATE;
                     }
                 
-                } else if  (!(leftBlocks.contains(Terrain.MUD) || leftBlocks.contains(Terrain.WALL) || leftNextBlock.contains(Terrain.MUD) || leftNextBlock.contains(Terrain.WALL)) && 
-                !(rightBlocks.contains(Terrain.MUD) || rightBlocks.contains(Terrain.WALL) || rightNextBlock.contains(Terrain.MUD) || rightNextBlock.contains(Terrain.WALL))) {
+                } else if  (!(isObstacle(rightBlocks) || isObstacle(rightNextBlock)) && 
+                !(isObstacle(leftBlocks) || isObstacle(leftNextBlock))) {
 
                     return TURN_RIGHT;
 
