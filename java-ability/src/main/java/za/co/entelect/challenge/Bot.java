@@ -22,7 +22,6 @@ public class Bot {
     
     private final static Command ACCELERATE = new AccelerateCommand();
     private final static Command LIZARD = new LizardCommand();
-    private final static Command TWEET = new TweetCommand(4,76);
     private final static Command OIL = new OilCommand();
     private final static Command BOOST = new BoostCommand();
     private final static Command EMP = new EmpCommand();
@@ -46,6 +45,10 @@ public class Bot {
             return FIX;
         }
 
+        if(myCar.speed < 3) {
+            return ACCELERATE;
+        }
+
         List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block);
 
         if (myCar.position.lane != 1) {
@@ -61,17 +64,10 @@ public class Bot {
                 return TURN_RIGHT;
             }
         }
-
-        
-
-        if(myCar.speed < 3) {
-            return ACCELERATE;
-        }
-
         
 
         if (myCar.powerups.length > 0) {
-            if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.WALL)) {
+            if (isObstacle(blocks)) {
                 if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
                     return LIZARD;
                 }
@@ -82,20 +78,26 @@ public class Bot {
             }
     
             if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
-                return TWEET;
+                return new TweetCommand(opponent.position.lane, opponent.position.block+1);
             }
     
             if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
-                return EMP;
+                if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
+                    if(opponent.position.block > myCar.position.block){
+                        return EMP;
+                    }
+                }
             }
     
             if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
-                return OIL;
+                if(opponent.position.block < myCar.position.block){
+                    return OIL;
+                }
             }
         }
 
 
-        if (blocks.contains(Terrain.MUD) || blocks.contains(Terrain.WALL)) {
+        if (isObstacle(blocks)) {
 
             if (myCar.position.lane == 1) {
                 return TURN_RIGHT;
@@ -181,4 +183,10 @@ public class Bot {
         
         return blocks;
     }
+
+    private boolean isObstacle (List<Object> blocks) {
+
+        return blocks.contains(Terrain.WALL) || blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL) || blocks.contains(Terrain.TWEET);
+    
+    } 
 }
