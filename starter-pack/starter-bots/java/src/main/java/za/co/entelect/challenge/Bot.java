@@ -69,10 +69,10 @@ public class Bot {
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
                 List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState);
-                List<Object> rightNextBlock = rightBlocks.subList(0, 1);
+                List<Object> rightNextBlock = rightBlocks.subList(0, 0);
 
                 List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState);
-                List<Object> leftNextBlock = leftBlocks.subList(0, 1);
+                List<Object> leftNextBlock = leftBlocks.subList(0, 0);
                 
                 if ( (isObstacle(rightBlocks) || isObstacle(rightNextBlock)) && 
                     !(isObstacle(leftBlocks) || isObstacle(leftNextBlock)) ) {
