@@ -14,10 +14,12 @@ import java.security.SecureRandom;
 
 public class Bot {
 
-    private static final int maxSpeed = ;
+    private static final int maxSpeed = 9;
     private List<Command> directionList = new ArrayList<>();
 
     private final Random random;
+    private Car opponent;
+    private Car myCar;
 
     private final static Command ACCELERATE = new AccelerateCommand();
     private final static Command LIZARD = new LizardCommand();
@@ -37,8 +39,8 @@ public class Bot {
     }
 
     public Command run(GameState gameState) {
-        Car myCar = gameState.player;
-        Car opponent = gameState.opponent;
+        myCar = gameState.player;
+        opponent = gameState.opponent;
 
         //Basic fix logic
         List<Object> blocks = getBlocksInFront(myCar.position.lane, myCar.position.block, gameState);
