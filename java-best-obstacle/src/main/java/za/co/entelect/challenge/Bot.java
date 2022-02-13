@@ -179,7 +179,7 @@ public class Bot {
             Lane[] laneList = map.get(lane - 1);
             
             
-            for (int i = max(block - startBlock, 0) + 1; i <= block - startBlock + myCar.speed; i++) {
+            for (int i = max(block - startBlock, 0) ; i <= block - startBlock + myCar.speed; i++) {
                 if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                     break;
                 }
