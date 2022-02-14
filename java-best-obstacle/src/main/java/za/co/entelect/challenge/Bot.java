@@ -134,17 +134,33 @@ public class Bot {
 
         //Basic improvement logic
         
-        if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
-            return BOOST;
-        }
-
-        //Basic aggression logic
-        if (myCar.speed == maxSpeed) {
-            if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
-                return OIL;
+        if (myCar.powerups.length > 0) {
+            if (isObstacle(blocks)) {
+                if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
+                    return LIZARD;
+                }
             }
+
+            if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
+                return BOOST;
+            }
+    
+            if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
+                return new TweetCommand(opponent.position.lane, opponent.position.block+opponent.speed + 1);
+            }
+    
             if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
-                return EMP;
+                if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
+                    if(opponent.position.block > myCar.position.block){
+                        return EMP;
+                    }
+                }
+            }
+    
+            if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
+                if(opponent.position.block < myCar.position.block){
+                    return OIL;
+                }
             }
         }
 
@@ -179,7 +195,7 @@ public class Bot {
             Lane[] laneList = map.get(lane - 1);
             
             
-            for (int i = max(block - startBlock, 0); i <= block - startBlock + myCar.speed; i++) {
+            for (int i = max(block - startBlock, 0)+1; i <= block - startBlock + myCar.speed; i++) {
                 if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
                     break;
                 }
