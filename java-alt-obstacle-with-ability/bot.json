@@ -3,6 +3,6 @@
 	"email": "John.Doe@example.com",
 	"nickName": "Bot-alt-abi-obst",
 	"botLocation": "/target",
-	"botFileName": "java-starter-bot-jar-with-dependencies.jar",
+	"botFileName": "java-alt-obstacle-abi-bot-jar-with-dependencies.jar",
 	"botLanguage": "java"
 }

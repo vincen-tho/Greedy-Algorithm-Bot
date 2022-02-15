@@ -189,9 +189,7 @@ public class Bot {
 
 
         if(myCar.damage >= 2) {
-            if(myCar.speed <= 6) {
-                return FIX;
-            }
+            return FIX;
         }
 
         return ACCELERATE;

@@ -168,30 +168,36 @@ public class Bot {
                 return BOOST;
             }
     
-            if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
-                return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 4);
-            }
-    
-            if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
-                if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
-                    if(opponent.position.block > myCar.position.block){
+            if(opponent.position.block > myCar.position.block){
+            
+                if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
+                    if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
+
                         return EMP;
                     }
                 }
             }
-    
-            if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
-                if(opponent.position.block < myCar.position.block){
-                    return OIL;
+            if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
+
+                return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 4);
+
+            }
+
+            if(opponent.position.block < myCar.position.block){
+               
+                if (myCar.speed == maxSpeed) {
+                    if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
+
+                            return OIL;
+
+                    }
                 }
             }
         }
 
 
-        if(myCar.damage >= 2) {
-            if(myCar.speed <= 6) {
-                return FIX;
-            }
+        if(myCar.damage >= 2) { 
+            return FIX;
         }
 
         return ACCELERATE;
