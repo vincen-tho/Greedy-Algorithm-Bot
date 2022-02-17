@@ -61,15 +61,19 @@ public class Bot {
 
         //Basic avoidance logic
         boolean isTruckFront = CheckTruck(myCar.position.lane, myCar.position.block, gameState, maxSpeed);
+        int damageFront = calcDamage(blocks);
         
         if (isObstacle(blocks) || isObstacle(nextBlocks) || isTruckFront) {
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
-                List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState, maxSpeed);
+                List<Object> rightBlocks = getBlocksSide(myCar.position.lane + 1, myCar.position.block, gameState);
                 List<Object> rightNextBlock = rightBlocks.subList(0, 0);
+                int damageRight = calcDamage(rightBlocks);
 
-                List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState, maxSpeed);
+
+                List<Object> leftBlocks = getBlocksSide(myCar.position.lane - 1, myCar.position.block, gameState);
                 List<Object> leftNextBlock = leftBlocks.subList(0, 0);
+                int damageLeft = calcDamage(leftBlocks);
 
                 boolean isTruckRight = CheckTruck(myCar.position.lane + 1, myCar.position.block, gameState, maxSpeed);
                 boolean isTruckLeft = CheckTruck(myCar.position.lane - 1, myCar.position.block, gameState, maxSpeed);
@@ -101,13 +105,45 @@ public class Bot {
 
                         } else if (!isTruckLeft && !isTruckRight) {
 
-                            return TURN_RIGHT;
+                            if (damageLeft < damageRight) {
+
+                                return TURN_LEFT;
+
+                            } else {
+
+                                return TURN_RIGHT;
+
+                            }
 
                         }
                     } else {
-
-                        return ACCELERATE;
-
+                        if (isTruckRight){
+                            if (!isTruckLeft){
+                                if (damageLeft < damageFront) {
+                                    return TURN_LEFT;
+                                }
+                            }
+                        } else {
+                            if (isTruckLeft) {
+                                if (damageRight < damageFront) {
+                                    return TURN_RIGHT;
+                                }
+                            } else {
+                                if (damageFront > damageLeft || damageFront > damageRight) {
+                                    if (damageFront > damageLeft && damageFront > damageRight) {
+                                        if (damageRight < damageLeft) {
+                                            return TURN_RIGHT;
+                                        } else {
+                                            return TURN_LEFT;
+                                        }
+                                    } else if (damageFront < damageLeft) {
+                                        return TURN_RIGHT;
+                                    } else {
+                                        return TURN_LEFT;
+                                    }
+                                } 
+                            }
+                        }
                     }
                 } else if  (!(isObstacle(rightBlocks) || isObstacle(rightNextBlock) || isTruckRight) && 
                 !(isObstacle(leftBlocks) || isObstacle(leftNextBlock) || isTruckLeft) ) {
@@ -117,8 +153,9 @@ public class Bot {
                 }
 
             } else if (myCar.position.lane == 1) {
-                List<Object> rightBlocks = getBlocksInFront(myCar.position.lane + 1, myCar.position.block, gameState, maxSpeed);
+                List<Object> rightBlocks = getBlocksSide(myCar.position.lane + 1, myCar.position.block, gameState);
                 List<Object> rightNextBlock = rightBlocks.subList(0, 0);
+                int damageRight = calcDamage(rightBlocks);
 
                 boolean isTruckRight = CheckTruck(myCar.position.lane + 1, myCar.position.block, gameState, maxSpeed);
 
@@ -132,15 +169,20 @@ public class Bot {
                     if (isTruckFront) {
                         return TURN_RIGHT;
                     } else {
-                        return ACCELERATE;
+                        if (!isTruckRight) {
+                            if (damageFront > damageRight) {
+                                return TURN_RIGHT;
+                            }
+                        }
                     }
+                } else {
+                    return TURN_RIGHT;
                 }
 
-                return TURN_RIGHT;
-
             } else if (myCar.position.lane == 4) {
-                List<Object> leftBlocks = getBlocksInFront(myCar.position.lane - 1, myCar.position.block, gameState, maxSpeed);
+                List<Object> leftBlocks = getBlocksSide(myCar.position.lane - 1, myCar.position.block, gameState);
                 List<Object> leftNextBlock = leftBlocks.subList(0, 0);
+                int damageLeft = calcDamage(leftBlocks);
 
                 boolean isTruckLeft = CheckTruck(myCar.position.lane - 1, myCar.position.block, gameState, maxSpeed);
 
@@ -152,52 +194,61 @@ public class Bot {
                     if (isTruckFront) {
                         return TURN_LEFT;
                     } else {
-                        return ACCELERATE;
+                        if (!isTruckLeft) {
+                            if (damageFront > damageLeft) {
+                                return TURN_LEFT;
+                            }
+                        }
                     }
+                } else  {
+                    return TURN_LEFT;
                 }
-                
-                return TURN_LEFT;
             }
         }
 
 //        Basic improvement logic
-        
-        if(myCar.speed == maxSpeed) {
-            if (myCar.powerups.length > 0) {
 
-                if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
-                    return BOOST;
-                }
-        
-                if(opponent.position.block > myCar.position.block){
                 
-                    if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
-                        if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
+        if (myCar.powerups.length > 0) {
 
-                            return EMP;
-                        }
-                    }
-                }
-                if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
+            if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
+                return BOOST;
+            }
+    
+            if(opponent.position.block > myCar.position.block){
+            
+                if (hasPowerUp(PowerUps.EMP, myCar.powerups)) {
+                    if (opponent.position.lane == myCar.position.lane || opponent.position.lane == myCar.position.lane + 1 || opponent.position.lane == myCar.position.lane - 1){
 
-                    return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 4);
-
-                }
-
-                if(opponent.position.block < myCar.position.block){
-                
-                    if (myCar.speed == maxSpeed) {
-                        if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
-
-                                return OIL;
-
-                        }
+                        return EMP;
                     }
                 }
             }
-        }
 
-        if (myCar.damage >= 2) { 
+            
+
+            if(opponent.position.block < myCar.position.block){
+                if (myCar.speed == maxSpeed) {
+                    if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
+
+                            return OIL;
+
+                    }
+                } 
+                
+                if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
+                    if (opponent.speed <= 3){
+                        return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 4);
+                    } else if (opponent.speed <= 6){
+                        return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 3);
+                    } else {
+                        return new TweetCommand(opponent.position.lane, opponent.position.block+ opponent.speed + 2);
+                    }
+                }
+            }
+        } 
+
+        if (myCar.damage >= 1) { 
             return FIX;
         }
 
@@ -212,11 +263,6 @@ public class Bot {
         }
         return false;
     }
-
-    /**
-     * Returns map of blocks and the objects in the for the current lanes, returns
-     * the amount of blocks that can be traversed at max speed.
-     **/
 
     
     private List<Object> getBlocksInFront(int lane, int block, GameState gameState, int maxSpeed) {
@@ -240,6 +286,28 @@ public class Bot {
         return blocks;
     }
 
+    private List<Object> getBlocksSide(int lane, int block, GameState gameState) {
+        List<Object> blocks = new ArrayList<>();
+        if (lane != 4 || lane != 1){
+            List<Lane[]> map = gameState.lanes;
+            int startBlock = map.get(0)[0].position.block;
+
+            Lane[] laneList = map.get(lane - 1);
+            
+            
+            for (int i = max(block - startBlock, 0); i <= block - startBlock + myCar.speed-1; i++) {
+                if (laneList[i] == null || laneList[i].terrain == Terrain.FINISH) {
+                    break;
+                }
+
+                blocks.add(laneList[i].terrain);
+
+            }
+        }
+        return blocks;
+    }
+
+
     // Fungsi untuk memeriksa apakah sebuah block mengandung obstacle
 
     private boolean isObstacle (List<Object> blocks) {
@@ -247,6 +315,21 @@ public class Bot {
         return blocks.contains(Terrain.WALL) || blocks.contains(Terrain.MUD) || blocks.contains(Terrain.OIL_SPILL);
     
     } 
+
+    private int calcDamage (List<Object> blocks) {
+        Object[] block = blocks.toArray();
+        int damage = 0;
+        for (int i = 0; i < block.length; i++) {
+            if(block[i] == Terrain.WALL){
+                damage += 2;
+            }
+            else if (block[i] == Terrain.MUD || block[i] == Terrain.OIL_SPILL) {
+                damage += 1;
+            }
+        }
+
+        return damage;
+    }
 
     private boolean CheckTruck( int lane, int block, GameState gameState, int maxSpeed) {
         boolean isTruck = false;
