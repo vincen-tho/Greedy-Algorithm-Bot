@@ -63,19 +63,18 @@ public class Bot {
             if (myCar.position.lane != 4 && myCar.position.lane != 1) {
                 
                 List<Lane> rightBlocks = getBlocksSide(myCar.position.lane + 1, myCar.position.block, gameState);
-               
+                
                 int damageRight = calcDamage(rightBlocks);
 
 
                 List<Lane> leftBlocks = getBlocksSide(myCar.position.lane - 1, myCar.position.block, gameState);
-            
+                
                 int damageLeft = calcDamage(leftBlocks);
 
                 boolean isTruckRight = CheckTruck(rightBlocks);
                 boolean isTruckLeft = CheckTruck(leftBlocks);
                 
-                if ( (isObstacle(rightBlocks) || isTruckRight) && 
-                    !(isObstacle(leftBlocks) || isTruckLeft) ) {
+                if ( (isObstacle(rightBlocks) || isTruckRight) && !(isObstacle(leftBlocks)|| isTruckLeft) ) {
 
                     return TURN_LEFT;
                 
@@ -85,7 +84,7 @@ public class Bot {
                     return TURN_RIGHT;
 
                 } else if ( (isObstacle(rightBlocks) || isTruckRight) && 
-                (isObstacle(leftBlocks)  || isTruckLeft) ){
+                (isObstacle(leftBlocks) || isTruckLeft) ){
                     if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {
 
                         if (calcLastDamage(blocks) < damageLeft && calcLastDamage(blocks) < damageRight){
@@ -188,7 +187,7 @@ public class Bot {
 
                 if (isObstacle(leftBlocks) || isTruckLeft) {
                     if (hasPowerUp(PowerUps.LIZARD, myCar.powerups)) {        
-
+                        
                         if (calcLastDamage(blocks) < damageLeft){
                             return LIZARD;
                         }
@@ -206,6 +205,34 @@ public class Bot {
                     }
                 } else  {
                     return TURN_LEFT;
+                }
+            }
+        } else if (!isBoost(blocks)) {
+            if (myCar.position.lane != 4 && myCar.position.lane != 1) {
+                List<Lane> leftBlocks = getBlocksSide(myCar.position.lane - 1, myCar.position.block, gameState);
+                List<Lane> rightBlocks = getBlocksSide(myCar.position.lane + 1, myCar.position.block, gameState);
+                if (!isObstacle(leftBlocks) && !CheckTruck(leftBlocks) && isBoost(leftBlocks)) {
+
+                    return TURN_LEFT;
+                    
+                } else if (!isObstacle(rightBlocks) && !CheckTruck(rightBlocks) && isBoost(rightBlocks)) {
+
+                    return TURN_RIGHT;
+
+                }
+            } else if (myCar.position.lane == 1) {
+                List<Lane> rightBlocks = getBlocksSide(myCar.position.lane + 1, myCar.position.block, gameState);
+                if (!isObstacle(rightBlocks) && !CheckTruck(rightBlocks) && isBoost(rightBlocks)) {
+
+                    return TURN_RIGHT;
+
+                }
+            } else if (myCar.position.lane == 4) {
+                List<Lane> leftBlocks = getBlocksSide(myCar.position.lane - 1, myCar.position.block, gameState);
+                if (!isObstacle(leftBlocks) && !CheckTruck(leftBlocks) && isBoost(leftBlocks)) {
+
+                    return TURN_LEFT;
+
                 }
             }
         }
@@ -348,6 +375,18 @@ public class Bot {
         blocks.toArray(block);
         for (int i = 0; i < block.length; i++) {
             if (block[i].terrain == Terrain.WALL || block[i].terrain == Terrain.MUD || block[i].terrain == Terrain.OIL_SPILL) {
+                 return true;
+            }
+         }
+
+        return false;
+    } 
+    
+    private boolean isBoost (List<Lane> blocks) {
+        Lane[] block = new Lane[blocks.size()];
+        blocks.toArray(block);
+        for (int i = 0; i < block.length; i++) {
+            if (block[i].terrain == Terrain.BOOST) {
                  return true;
             }
          }
