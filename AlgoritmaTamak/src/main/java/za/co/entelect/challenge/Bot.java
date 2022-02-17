@@ -243,7 +243,7 @@ public class Bot {
         if (myCar.powerups.length > 0) {
             if (hasPowerUp(PowerUps.BOOST, myCar.powerups)) {
                 List<Lane> blockFar = getBlocksInFrontFar(myCar.position.lane, myCar.position.block, gameState);
-                if (myCar.damage == 0 && !myCar.boosting && !isObstacle(blockFar) && !CheckTruck(blockFar)) {
+                if (myCar.damage == 0 && myCar.boostCounter <= 2 && !isObstacle(blockFar) && !CheckTruck(blockFar)) {
                     return BOOST;     
                 }
             }
