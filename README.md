@@ -16,7 +16,7 @@ Strategi algoritma greedy yang diimplementasikan ini adalah untuk algoritma bot 
 7. Untuk menggunakan visualizer, download dan ekstrak zip visualizer dari https://github.com/Affuta/overdrive-round-runner, yang petunjuk penggunaannya dapat dilihat pada link yang sama
 
 # Author
-Kelompok Algoritma Tamak
+Kelompok 35 Algoritma Tamak
 
 Anggota :
 
