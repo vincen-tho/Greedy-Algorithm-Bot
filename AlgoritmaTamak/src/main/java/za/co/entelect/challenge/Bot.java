@@ -257,11 +257,11 @@ public class Bot {
                 }
             }
             
+            if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
+                return new TweetCommand(opponent.position.lane, opponent.position.block + GetSpeedAfterAccel(opponent) + 1);
+            }
 
             if(opponent.position.block < myCar.position.block){
-                if (hasPowerUp(PowerUps.TWEET, myCar.powerups)) {
-                    return new TweetCommand(opponent.position.lane, opponent.position.block + GetSpeedAfterAccel(opponent) + 1);
-                }
 
                 if (myCar.speed == maxSpeed) {
                     if (hasPowerUp(PowerUps.OIL, myCar.powerups)) {
