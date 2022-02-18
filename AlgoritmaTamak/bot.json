@@ -1,8 +1,0 @@
-{
-	"author": "John Doe",
-	"email": "John.Doe@example.com",
-	"nickName": "AlgoritmaTamak",
-	"botLocation": "/target",
-	"botFileName": "AlgoritmaTamak-jar-with-dependencies.jar",
-	"botLanguage": "java"
-}
